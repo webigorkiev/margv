@@ -1,0 +1,15 @@
+{
+  "name": "margv",
+  "version": "1.0.0",
+  "description": "simple node.js argv parser",
+  "main": "index.js",
+  "types": "src/index.ts",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "argv"
+  ],
+  "author": "webigorkiev",
+  "license": "ISC"
+}
