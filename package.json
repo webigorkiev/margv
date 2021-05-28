@@ -1,6 +1,6 @@
 {
   "name": "margv",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "simple node.js argv parser",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -12,6 +12,10 @@
   "keywords": [
     "argv", "cli", "process.argv", "argv parser"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webigorkiev/margv.git"
+  },
   "author": "webigorkiev",
   "license": "MIT",
   "devDependencies": {
