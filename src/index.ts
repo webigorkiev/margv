@@ -1,4 +1,4 @@
-export default function margv(argv: Array<string>|undefined) : Record<string, any> {
+export default function margv(argv?: Array<string>|undefined) : Record<string, any> {
     interface argsReduce {
         args: Record<string, any>,
         prev: string|number,
