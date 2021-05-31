@@ -2,6 +2,15 @@ const {expect} = require("chai");
 const margv = require("../dist/index.js");
 
 describe("margv", () => {
+    describe("single value", () => {
+       it("--param value", () => {
+           const args = "/usr/bin/node text.spec.js --param value".split(/\s+/);
+           const result = margv(args);
+           expect(result.param)
+               .to.be.a("string")
+               .that.equal("value");
+       });
+    });
     describe("common", () => {
         const args = "/usr/bin/node text.spec.js ssr --no-ff -- no include".split(/\s+/);
         const result = margv(args);
@@ -72,7 +81,7 @@ describe("margv", () => {
             const result = margv(args);
             expect(result.a)
                 .to.be.a("array")
-                .that.eql([1, 2, 3]);
+                .that.eql(["1", "2", "3"]);
         });
     });
     describe("object", () => {
@@ -89,7 +98,7 @@ describe("margv", () => {
             const result = margv(args);
             expect(result.a)
                 .to.be.a("object")
-                .that.eql({p:1});
+                .that.eql({"p":"1"});
         });
     });
     describe("null", () => {

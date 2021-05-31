@@ -5,20 +5,22 @@ export default function margv(argv?: Array<string>|undefined) : Record<string, a
         value: string|number,
         type: 0|1|2,
         prevType: 0|1|2,
-        default: boolean
+        default: boolean,
+        used: boolean
     }
     argv = Array.isArray(argv) && argv.length ? argv : process.argv;
+    const paramsToString = (v: string) => v.replace(/([^,\[\]():{}]+)/g, `"$1"`);
     const parseValue = (v:string) => {
         if(/^\+\d+/.test(v)) {
             return Number(v);
         }
 
         if(/^{(.+)}$/.test(v)) {
-            return eval(`(${v})`);
+            return parseValueRecurcive(eval(`(${paramsToString(v)})`));
         }
 
         if(/^\[(.+)]$/.test(v)) {
-            return eval(`(${v})`);
+            return parseValueRecurcive(eval(`(${paramsToString(v)})`));
         }
 
         if(v === "undefined") {
@@ -38,15 +40,33 @@ export default function margv(argv?: Array<string>|undefined) : Record<string, a
         }
 
         if(/^Set\(\[(.+)]\)$/.test(v)) {
-            return eval(`(new ${v})`);
+            v = v.replace(/^Set/, "");
+
+            return parseValueRecurcive(eval(`(new Set${paramsToString(v)})`));
         }
 
         if(/^Map\(\[(.+)]\)$/.test(v)) {
-            return eval(`(new ${v})`);
+            v = v.replace(/^Map/, "");
+
+            return parseValueRecurcive(eval(`(new Map${paramsToString(v)})`));
         }
 
         return v;
-    }
+    };
+    const parseValueRecurcive = (value: any): any => {
+
+        if(!value) {
+            return parseValue(value);
+        }
+
+        if(Array.isArray(value) || typeof value === "object") {
+            Object.keys(value).map(key => value[key] = parseValueRecurcive(value[key]));
+
+            return value;
+        }
+
+        return parseValue(value);
+    };
     const changing = (
         deep: string,
         value: any,
@@ -117,17 +137,22 @@ export default function margv(argv?: Array<string>|undefined) : Record<string, a
         if(typeof ac.prev === "string" && ac.prev.indexOf("=") !== -1) {
             const [key, value] = ac.prev.split("=");
             setValue(ac, key as string, value);
+            ac.used = false;
         } else {
 
             if(
                 ac.type === ac.prevType
-                || (ac.prevType === 2 && i === 1)
-                || (ac.prevType === 2 && i === array.length - 1)
+                || (!ac.used && ac.prevType === 2 && i === 1)
+                || (!ac.used && ac.prevType === 2 && i === array.length - 1)
             ) {
                 ac.args[ac.prev] = ac.default;
+                ac.used = false;
             } else if(ac.prevType === 1 && ac.type === 2) {
                 setValue(ac, ac.prev as string, v);
                 ac.value = parseValue(v);
+                ac.used = true;
+            } else {
+                ac.used = false;
             }
         }
 
@@ -135,7 +160,7 @@ export default function margv(argv?: Array<string>|undefined) : Record<string, a
         ac.prev = ac.value;
         ac.prevType = ac.type;
         return ac;
-    }, {args: {}, value: "", type: 0, prev: "", prevType: 0, default: true}).args;
+    }, {args: {}, value: "", type: 0, prev: "", prevType: 0, default: true, used: true}).args;
 
     return Object.assign(result, args);
 };
