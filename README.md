@@ -14,6 +14,7 @@ npm i margv
 
 ## Features
 
+* Zero Dependencies
 * opt --no-opt -param --param -param=value --param=[1,2] and other formats
 * Supports array, object, Map, Set
 * Very simple small library
