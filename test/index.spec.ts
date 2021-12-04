@@ -93,12 +93,12 @@ describe("margv", () => {
                 .that.eql({name: ["test", "last"], kind:{type: "object"}});
         });
 
-        it(`-a={p:1}`, () => {
-            const args = "/usr/bin/node text.spec.js -a={p:1}".split(/\s+/);
+        it(`-a={p:1, b:true}`, () => {
+            const args = "/usr/bin/node text.spec.js -a={p:1,b:true}".split(/\s+/);
             const result = margv(args);
             expect(result.a)
                 .to.be.a("object")
-                .that.eql({"p":"1"});
+                .that.eql({"p":"1", "b": true});
         });
     });
     describe("null", () => {

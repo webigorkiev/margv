@@ -39,6 +39,14 @@ export default function margv(argv?: Array<string>|undefined) : Record<string, a
             return Infinity;
         }
 
+        if(v === "true") {
+            return true;
+        }
+
+        if(v === "false") {
+            return false;
+        }
+
         if(/^Set\(\[(.+)]\)$/.test(v)) {
             v = v.replace(/^Set/, "");
 
