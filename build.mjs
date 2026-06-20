@@ -1,5 +1,5 @@
 import { execSync } from 'node:child_process';
-import { existsSync, rmSync, renameSync, copyFileSync } from 'node:fs';
+import { existsSync, rmSync, renameSync, copyFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const root = process.cwd();
@@ -17,9 +17,19 @@ function copyArtifacts() {
     copyFileSync(resolve(root, 'LICENSE'), resolve(dist, 'LICENSE'));
 }
 
+function patchCjsExport(filePath) {
+    var code = readFileSync(filePath, 'utf8');
+    if (code.indexOf('module.exports = margv;') === -1) {
+        code += '\nmodule.exports = margv;\n';
+        writeFileSync(filePath, code);
+    }
+}
+
 console.log('> build CJS');
 run(`tsc "${src}" --declaration --outDir "${dist}"`);
-run(`terser "${dist}/index.js" --output "${dist}/index.js"`);
+patchCjsExport(resolve(dist, 'index.js'));
+renameSync(resolve(dist, 'index.js'), resolve(dist, 'index.cjs'));
+run(`terser "${dist}/index.cjs" --output "${dist}/index.cjs"`);
 
 console.log('> build ESM');
 run(`tsc "${src}" --declaration false --outDir "${tmpEsmDir}" --module ES2020`);
