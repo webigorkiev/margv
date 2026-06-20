@@ -1,13 +1,14 @@
-export default function margv(argv?: Array<string>|undefined) : Record<string, any> {
-    interface argsReduce {
-        args: Record<string, any>,
-        prev: string|number,
-        value: string|number,
-        type: 0|1|2,
-        prevType: 0|1|2,
-        default: boolean,
-        used: boolean
-    }
+interface argsReduce {
+    args: Record<string, any>,
+    prev: string|number,
+    value: string|number,
+    type: 0|1|2,
+    prevType: 0|1|2,
+    default: boolean,
+    used: boolean
+}
+
+export default function margv(argv?: string[]) : Record<string, any> {
     argv = Array.isArray(argv) && argv.length ? argv : process.argv;
     const paramsToString = (v: string) => v.replace(/([^,\[\]():{}]+)/g, `"$1"`);
     const parseValue = (v:string) => {
