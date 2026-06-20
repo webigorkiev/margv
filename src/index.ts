@@ -173,4 +173,3 @@ export default function margv(argv?: string[]) : Record<string, any> {
 
     return Object.assign(result, args);
 };
-module.exports = margv;
